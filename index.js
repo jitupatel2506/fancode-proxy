@@ -2,26 +2,33 @@ import express from "express";
 import fetch from "node-fetch";
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
 
+// Proxy endpoint
 app.get("/proxy", async (req, res) => {
-  const target = req.query.url;
-  if (!target) return res.status(400).send("Missing ?url param");
+  const targetUrl = req.query.url;
+  if (!targetUrl) {
+    return res.status(400).send("Missing url parameter");
+  }
 
   try {
-    const response = await fetch(target, {
+    const response = await fetch(targetUrl, {
       headers: {
-        "User-Agent": "Mozilla/5.0",
-        "Referer": new URL(target).origin + "/"
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Origin": "https://www.fancode.com",
+        "Referer": "https://www.fancode.com/"
       }
     });
 
-    res.set("Access-Control-Allow-Origin", "*");
-    res.set("Content-Type", response.headers.get("content-type") || "application/octet-stream");
+    // पास headers
+    res.setHeader("Content-Type", response.headers.get("content-type"));
+    res.setHeader("Access-Control-Allow-Origin", "*");
 
     response.body.pipe(res);
-  } catch (err) {
-    res.status(500).send("Proxy Error: " + err.message);
+  } catch (error) {
+    console.error("Proxy error:", error);
+    res.status(500).send("Proxy failed: " + error.message);
   }
 });
 
