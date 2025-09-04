@@ -10,13 +10,13 @@ app.get("/proxy", async (req, res) => {
       return res.status(400).send("Missing url parameter");
     }
 
-    const response = await fetch(targetUrl, {
-      headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "Origin": "https://www.fancode.com",
-        "Referer": "https://www.fancode.com/",
-      }
-    });
+   const response = await fetch(targetUrl, {
+  headers: {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+    "Origin": "https://www.fancode.com",
+    "Referer": "https://www.fancode.com/",
+  }
+});
 
     if (!response.ok) {
       return res.status(response.status).send("Upstream error: " + response.statusText);
@@ -32,3 +32,4 @@ app.get("/proxy", async (req, res) => {
 });
 
 app.listen(3000, () => console.log("Proxy running on port 3000"));
+
